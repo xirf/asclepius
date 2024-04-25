@@ -1,0 +1,20 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Asclepius" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/primary_400</item>
+        <item name="colorPrimaryVariant">@color/primary_50</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondary_500</item>
+        <item name="android:windowBackground">@color/primary_10</item>
+
+    </style>
+
+    <style name="Theme.Asclepius" parent="Base.Theme.Asclepius" />
+
+    <style name="Button.primary" parent="Widget.Material3.Button">
+        <item name="cornerRadius">4dp</item>
+        <item name="elevation">4dp</item>
+        <item name="rippleColor">@color/primary_50</item>
+    </style>
+</resources>
