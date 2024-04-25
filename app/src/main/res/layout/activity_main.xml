@@ -75,7 +75,7 @@
                 style="@style/Button.primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:text="@string/gallery" />
 
@@ -84,18 +84,16 @@
                 style="@style/Button.primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:text="@string/camera" />
         </LinearLayout>
 
         <Button
             android:id="@+id/analyzeButton"
-            style="@style/Button.primary"
+            style="@style/Button.secondary"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginBottom="8dp"
             android:layout_weight="1"
             android:text="@string/analyze" />
 
