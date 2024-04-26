@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.dicoding.asclepius.R
 import com.dicoding.asclepius.data.response.ArticlesItem
 import com.dicoding.asclepius.databinding.ItemNewsBinding
 
@@ -16,9 +17,13 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsAdapterHolder>() {
         RecyclerView.ViewHolder(binding.root) {
         fun bind(news: ArticlesItem) {
             with(binding) {
-                Glide.with(itemView.context)
-                    .load(news.urlToImage)
-                    .into(ivNews)
+                if (news.urlToImage != null) {
+                    Glide.with(itemView.context)
+                        .load(news.urlToImage)
+                        .into(ivNews)
+                } else {
+                    ivNews.setImageResource(R.drawable.ic_place_holder)
+                }
                 tvTitle.text = news.title
                 tvDescription.text = news.description
             }
@@ -28,7 +33,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsAdapterHolder>() {
     fun setListNews(items: List<ArticlesItem>) {
         val isDifferent = DiffUtil.calculateDiff(DiffUtilCallback(listNews, items))
         listNews.clear()
-        listNews.addAll(listNews)
+        listNews.addAll(items)
         isDifferent.dispatchUpdatesTo(this)
     }
 

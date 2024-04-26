@@ -47,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         with(binding) {
+            progressIndicator.visibility = View.GONE
+
             analyzeButton.setOnClickListener { analyzeImage() }
             galleryButton.setOnClickListener {
                 launcherGallery.launch(
@@ -85,15 +87,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun analyzeImage() {
         currentImageUri?.let {
+            binding.progressIndicator.visibility = View.VISIBLE
             val imageClassifierHelper =
                 ImageClassifierHelper(this, object : ImageClassifierHelper.ClassifierListener {
                     override fun onError(error: String) {
                         showToast(error)
+                        binding.progressIndicator.visibility = View.GONE
                     }
 
                     override fun onResults(results: List<Classifications>?) {
                         analyzeResult = results
                         moveToResult()
+                        binding.progressIndicator.visibility = View.GONE
                     }
                 })
             imageClassifierHelper.classifyStaticImage(it)
@@ -109,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, topClassifications[0].score)
             intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, currentImageUri.toString())
             startActivity(intent)
-        }else{
+        } else {
             showToast(getString(R.string.classification_failed))
         }
     }
