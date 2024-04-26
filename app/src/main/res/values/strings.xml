@@ -9,4 +9,5 @@
     <string name="image_classifier_is_not_initialized_yet">Tunggu sebentar, sedang menginisialisasi model</string>
     <string name="history">History</string>
     <string name="kembali">kembali</string>
+    <string name="classification_failed">Snap!!, Ada masalah silahkan coba lagi</string>
 </resources>

@@ -1,12 +1,18 @@
 package com.dicoding.asclepius.view
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
@@ -19,32 +25,57 @@ class MainActivity : AppCompatActivity() {
     private var analyzeResult: List<Classifications>? = null
     private var toast: Toast? = null
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                showToast("Permission Granted")
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (!checkPermissions()) {
+            requestPermissionLauncher.launch(REQUIRE_PERMISSION)
+        }
+
+        if (currentImageUri == null) {
+            binding.analyzeButton.visibility = View.GONE
+        }
+
         with(binding) {
-            analyzeButton.isClickable = false
-            galleryButton.setOnClickListener { startGallery() }
-            if (currentImageUri != null) {
-                showImage()
-                analyzeButton.isClickable = true
-                analyzeButton.setOnClickListener { analyzeImage() }
+            analyzeButton.setOnClickListener { analyzeImage() }
+            galleryButton.setOnClickListener {
+                launcherGallery.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly
+                    )
+                )
             }
         }
     }
 
-    private fun startGallery() {
+    private fun checkPermissions() = ContextCompat.checkSelfPermission(
+        this,
+        REQUIRE_PERMISSION
+    ) == PackageManager.PERMISSION_GRANTED
+
+
+    private val launcherGallery =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            if (uri == null) {
-                showToast(getString(R.string.empty_image_warning))
-            } else {
+            if (uri != null) {
                 currentImageUri = uri
                 showImage()
+                binding.analyzeButton.visibility = View.VISIBLE
+            } else {
+                binding.analyzeButton.visibility = View.GONE
+                showToast(getString(R.string.empty_image_warning))
             }
         }
-    }
+
 
     private fun showImage() {
         currentImageUri?.let {
@@ -70,15 +101,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun moveToResult() {
-        val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra(ResultActivity.EXTRA_PREDICTION, analyzeResult?.toTypedArray())
-        intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, currentImageUri)
-        startActivity(intent)
+        val topClassifications = analyzeResult?.get(0)?.categories
+        if (topClassifications != null) {
+            val intent = Intent(this, ResultActivity::class.java)
+            Log.d("RESULT", topClassifications[0].toString())
+            intent.putExtra(ResultActivity.EXTRA_RESULT, topClassifications[0].label)
+            intent.putExtra(ResultActivity.EXTRA_CONFIDENCE_SCORE, topClassifications[0].score)
+            intent.putExtra(ResultActivity.EXTRA_IMAGE_URI, currentImageUri.toString())
+            startActivity(intent)
+        }else{
+            showToast(getString(R.string.classification_failed))
+        }
     }
 
     private fun showToast(message: String) {
         toast?.cancel()
         toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
         toast?.show()
+    }
+
+    companion object {
+        private const val REQUIRE_PERMISSION = Manifest.permission.CAMERA
     }
 }
