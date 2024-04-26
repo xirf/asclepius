@@ -25,14 +25,14 @@
 
         <LinearLayout
             android:id="@+id/main_container"
-            android:background="@drawable/rounded_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/result_image"
             android:layout_marginTop="-40dp"
-            >
+            android:background="@drawable/rounded_top"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/result_image">
 
             <TextView
                 android:id="@+id/confidence_text"
@@ -56,6 +56,33 @@
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/confidence_text" />
 
+            <TextView
+                android:id="@+id/description_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/find_hospital_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/find_hospital"
+                app:layout_constraintTop_toBottomOf="@id/description_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Lihat berita terkait"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                tools:listitem="@layout/item_news" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,10 +4,14 @@
     <string name="camera">Kamera</string>
     <string name="gallery">Galeri</string>
     <string name="analyze">Analyze</string>
-    <string name="result">Hasil Analisis</string>
-    <string name="empty_image_warning">Ups tidak ada gambar, silahkan pilih terlebih dahulu</string>
-    <string name="image_classifier_is_not_initialized_yet">Tunggu sebentar, sedang menginisialisasi model</string>
     <string name="history">History</string>
     <string name="kembali">kembali</string>
+    <string name="find_hospital">Cari Rumah Sakit</string>
+    <string name="result">Hasil Analisis</string>
     <string name="classification_failed">Snap!!, Ada masalah silahkan coba lagi</string>
+    <string name="empty_image_warning">Ups tidak ada gambar, silahkan pilih terlebih dahulu</string>
+    <string name="image_classifier_is_not_initialized_yet">Tunggu sebentar, sedang menginisialisasi model</string>
+    <string name="result_cancer">Hasil prediksi menunjukkan kemungkinan adanya kanker. Namun, perlu konfirmasi oleh dokter spesialis untuk diagnosis pasti. Segera berkonsultasi dengan dokter untuk pemeriksaan lebih lanjut dan perawatan yang sesuai.</string>
+    <string name="result_no_cancer">Hasil prediksi menunjukkan tidak adanya kanker. Tetapi, untuk memastikan hasil ini, kami sarankan Anda berkonsultasi dengan dokter untuk evaluasi lebih lanjut.</string>
+    <string name="sampul_berita">sampul berita</string>
 </resources>
