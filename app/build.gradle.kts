@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -27,6 +29,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        defaultConfig {
+            val p = Properties()
+            p.load(project.rootProject.file("local.properties").reader())
+            val apiKey: String = p.getProperty("API_KEY")
+            buildConfigField("String", "BASE_URL", "\"https://newsapi.org/v2/\"")
+            buildConfigField("String", "API_KEY", apiKey)
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -37,8 +47,8 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        mlModelBinding = true
         buildConfig = true
+        mlModelBinding = true
     }
 }
 
