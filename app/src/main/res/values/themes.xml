@@ -12,13 +12,8 @@
 
     <style name="Theme.Asclepius" parent="Base.Theme.Asclepius" />
 
-    <style name="Button.primary" parent="Widget.Material3.Button">
-        <item name="cornerRadius">4dp</item>
-        <item name="elevation">4dp</item>
-        <item name="rippleColor">@color/primary_50</item>
-    </style>
+
     <style name="Button.secondary" parent="Widget.Material3.Button">
-        <item name="cornerRadius">4dp</item>
         <item name="elevation">4dp</item>
         <item name="android:backgroundTint">@color/secondary_500</item>
         <item name="rippleColor">@color/secondary_600</item>

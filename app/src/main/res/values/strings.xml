@@ -17,4 +17,5 @@
     <string name="no_news">Tidak ada berita terkait</string>
     <string name="related_news">Lihat berita terkait</string>
     <string name="tidak_ada_riwayat">Tidak ada riwayat</string>
+    <string name="cancel_action">Operasi telah dibatalkan, gambar sebelumnya akan digunakan untuk prediksi</string>
 </resources>

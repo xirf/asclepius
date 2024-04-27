@@ -28,6 +28,10 @@ class HistoryActivity : AppCompatActivity() {
         historyViewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
         mediaStorageHelper = MediaStorageHelper(this)
 
+
+        binding.backButton.setOnClickListener { finish() }
+
+
         enableEdgeToEdge()
         setContentView(binding.root)
         listenToHistory()

@@ -6,7 +6,16 @@ import android.content.ContextWrapper
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
+import com.dicoding.asclepius.BuildConfig
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
 
 class MediaStorageHelper(
     private val context: Context
@@ -62,4 +71,38 @@ class MediaStorageHelper(
         return filename
     }
 
+    fun getImageUri(): Uri {
+        var uri: Uri? = null
+        val timeStamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, "$timeStamp.jpg")
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/MyCamera/")
+            }
+            uri = context.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+            )
+        }
+        return uri ?: getImageUriForPreQ()
+    }
+
+    private fun getImageUriForPreQ(): Uri {
+        val timeStamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date())
+        val filesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val imageFile = File(filesDir, "/MyCamera/$timeStamp.jpg")
+        if (imageFile.parentFile?.exists() == false) imageFile.parentFile?.mkdir()
+        return FileProvider.getUriForFile(
+            context,
+            "${BuildConfig.APPLICATION_ID}.fileprovider",
+            imageFile
+        )
+    }
+
+    fun createCustomTempFile(context: Context): File {
+        val timeStamp = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date())
+        val filesDir = context.externalCacheDir
+        return File.createTempFile(timeStamp, ".jpg", filesDir)
+    }
 }

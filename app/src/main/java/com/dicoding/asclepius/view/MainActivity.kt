@@ -23,9 +23,8 @@ import com.dicoding.asclepius.viewmodel.HistoryViewModel
 import com.dicoding.asclepius.viewmodel.ViewModelFactory
 import com.yalantis.ucrop.UCrop
 import org.tensorflow.lite.task.vision.classifier.Classifications
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
+
+private const val REQUEST_IMAGE_CAPTURE = 1
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -34,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     private var currentImageUri: Uri? = null
     private var toast: Toast? = null
+    private var isSameImage = false
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
+            cameraButton.setOnClickListener { startCamera() }
             historyButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
             }
@@ -89,16 +90,40 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
             if (uri != null) {
                 cropImage(uri)
+                isSameImage = false
                 binding.analyzeButton.visibility = View.VISIBLE
             } else {
-                binding.analyzeButton.visibility = View.GONE
-                showToast(getString(R.string.empty_image_warning))
+                showErrorMessage()
             }
         }
 
+    private fun showErrorMessage() {
+        if (currentImageUri == null) {
+            showToast(getString(R.string.empty_image_warning))
+        } else {
+            showToast(getString(R.string.cancel_action))
+        }
+    }
+
+    private fun startCamera() {
+        currentImageUri = mediaStorageHelper.getImageUri()
+        launcherIntentCamera.launch(currentImageUri)
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            cropImage(currentImageUri!!)
+            isSameImage = false
+            binding.analyzeButton.visibility = View.VISIBLE
+        } else {
+            showErrorMessage()
+        }
+    }
 
     private fun cropImage(uri: Uri) {
-        val destinationUri: Uri = generateUriFromFile()
+        val destinationUri: Uri = mediaStorageHelper.getImageUri()
 
         UCrop.of(uri, destinationUri)
             .withAspectRatio(1f, 1f)
@@ -117,22 +142,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun generateUriFromFile(): Uri {
-        val filename =
-            SimpleDateFormat("yyyyMMdd_HHmmss", resources.configuration.locales[0]).format(
-                Date()
-            )
-        return Uri.fromFile(
-            File(
-                cacheDir,
-                "$filename.jpg"
-            )
-        )
-    }
-
     private fun showImage() {
-        currentImageUri?.let {
-            binding.previewImageView.setImageURI(it)
+        with(binding) {
+            currentImageUri?.let {
+                previewImageView.visibility = View.VISIBLE
+                clWelcome.visibility = View.GONE
+                previewImageView.setImageURI(it)
+            }
         }
     }
 
@@ -147,8 +163,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onResults(results: List<Classifications>?) {
-                        insertIntoHistory(results!!)
-                        moveToResult(results)
+                        if (results != null) {
+                            if (!isSameImage) insertIntoHistory(results);
+                            isSameImage = true
+                            moveToResult(results)
+                        }
                         binding.progressIndicator.visibility = View.GONE
                     }
                 })

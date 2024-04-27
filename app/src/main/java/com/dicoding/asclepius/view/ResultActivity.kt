@@ -52,7 +52,7 @@ class ResultActivity : AppCompatActivity() {
 
     private fun setupUI() {
         setupResultUI()
-        setupFindHospitalButton()
+        setupButton()
     }
 
 
@@ -84,8 +84,11 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupFindHospitalButton() {
-        binding.findHospitalButton.setOnClickListener { openUrl("https://www.google.com/maps/search/Hospitals") }
+    private fun setupButton() {
+        with(binding) {
+            findHospitalButton.setOnClickListener { openUrl("https://www.google.com/maps/search/Hospitals") }
+            backButton.setOnClickListener { finish() }
+        }
     }
 
     private fun getNews() {

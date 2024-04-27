@@ -8,6 +8,41 @@
     android:fitsSystemWindows="true"
     tools:context=".view.HistoryActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_10"
+        android:backgroundTint="@color/neutral_400"
+        app:elevation="24dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="#0000"
+                android:contentDescription="@string/kembali"
+                android:src="@drawable/chevron_left"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="@id/back_button"
+                app:layout_constraintLeft_toRightOf="@id/back_button"
+                app:layout_constraintTop_toTopOf="@id/back_button" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <TextView
         android:id="@+id/no_history"
         android:layout_width="wrap_content"
@@ -21,8 +56,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_history"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
         app:spanCount="2"
         tools:listitem="@layout/item_history" />
 
