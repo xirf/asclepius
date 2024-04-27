@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,8 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultBinding
     private lateinit var viewModel: MainViewModel
     private val adapter: NewsAdapter by lazy { NewsAdapter() }
+
+    private var newsLength = 0
 
     companion object {
         const val EXTRA_IMAGE_URI = "extra_image_uri"
@@ -95,13 +98,9 @@ class ResultActivity : AppCompatActivity() {
         viewModel.getNews()
         viewModel.news.observe(this) {
             if (it != null) {
-                binding.newsList.visibility = View.VISIBLE
-                binding.noNewsText.visibility = View.GONE
                 adapter.setListNews(it)
-                renderRecyclerView()
-            } else {
-                binding.newsList.visibility = View.GONE
-                binding.noNewsText.visibility = View.VISIBLE
+                Log.d("NEWS", it.toString())
+                newsLength = it.size
             }
         }
     }
@@ -123,10 +122,16 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun loadingState(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) {
-            View.VISIBLE
-        } else {
-            View.GONE
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+
+        if (!isLoading) {
+            Log.d("News", newsLength.toString())
+            val isNewsAvailable = newsLength > 0
+
+            binding.newsList.visibility = if (isNewsAvailable) View.VISIBLE else View.GONE
+            binding.noNewsText.visibility = if (isNewsAvailable) View.GONE else View.VISIBLE
+
+            if (isNewsAvailable) renderRecyclerView()
         }
     }
 }

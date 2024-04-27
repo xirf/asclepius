@@ -24,31 +24,29 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityHistoryBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
+        setContentView(binding.root)
+
         val factory = ViewModelFactory.getInstance(application)
         historyViewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
         mediaStorageHelper = MediaStorageHelper(this)
 
-
         binding.backButton.setOnClickListener { finish() }
 
-
-        enableEdgeToEdge()
-        setContentView(binding.root)
-        listenToHistory()
         setupRecyclerView()
+        loadHistory()
     }
 
-    private fun listenToHistory() {
-        historyViewModel.getAllHistory().observe(this) {
-            if (it.isEmpty()) {
+    private fun loadHistory() {
+        historyViewModel.getAllHistory().observe(this) { historyList ->
+            if (historyList.isEmpty()) {
                 binding.noHistory.visibility = View.VISIBLE
                 binding.rvHistory.visibility = View.GONE
             } else {
-                historyAdapter.setListHistory(it)
+                historyAdapter.setListHistory(historyList)
                 binding.noHistory.visibility = View.GONE
                 binding.rvHistory.visibility = View.VISIBLE
             }
-
         }
     }
 

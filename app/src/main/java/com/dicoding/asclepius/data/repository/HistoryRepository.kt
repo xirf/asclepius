@@ -17,10 +17,6 @@ class HistoryRepository(application: Application) {
     }
 
     fun getAllHistory() = mHistoryDao.getAll()
-    fun getHistoryById(id: Int) = mHistoryDao.getById(id)
-    fun deleteHistoryById(id: Int) {
-        executorService.execute { mHistoryDao.deleteById(id) }
-    }
 
     fun insertHistory(history:HistoryEntity) {
         executorService.execute { mHistoryDao.insert(history) }

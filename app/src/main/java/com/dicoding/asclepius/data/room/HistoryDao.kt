@@ -12,12 +12,6 @@ interface HistoryDao {
     @Query("SELECT * FROM history ORDER BY id DESC")
     fun getAll(): LiveData<List<HistoryEntity>>
 
-    @Query("SELECT * FROM history WHERE id = :id")
-    fun getById(id: Int): HistoryEntity
-
-    @Query("DELETE FROM history WHERE id = :id")
-    fun deleteById(id: Int)
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(history: HistoryEntity)
 }

@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
         android:background="@color/primary_10"
         android:backgroundTint="@color/neutral_400"
-        app:elevation="24dp">
+        app:elevation="24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -42,12 +44,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <TextView
         android:id="@+id/no_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tidak_ada_riwayat"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -59,6 +61,7 @@
         android:layout_height="0dp"
         android:paddingHorizontal="8dp"
         android:paddingTop="16dp"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"

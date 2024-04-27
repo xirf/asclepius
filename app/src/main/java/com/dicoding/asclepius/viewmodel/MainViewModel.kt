@@ -21,7 +21,6 @@ class MainViewModel : ViewModel() {
         val client = ApiConfig.getApiService().getNews()
         client.enqueue(object : Callback<NewsResponse> {
             override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
-                _isLoading.value = false
                 if (response.isSuccessful) {
                     val newsResponse = response.body()
                     if (newsResponse != null) {
@@ -31,6 +30,7 @@ class MainViewModel : ViewModel() {
                         }
                     }
                 }
+                _isLoading.value = false
             }
 
             override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
