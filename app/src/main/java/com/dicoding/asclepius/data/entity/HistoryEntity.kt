@@ -5,20 +5,16 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "history")
-class HistoryEntity(
-    @field:ColumnInfo(name = "id")
-    @field:PrimaryKey
-    var id: Int,
+data class HistoryEntity(
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
 
-    @field:ColumnInfo(name = "image")
-    var image: String,
+    @ColumnInfo(name = "label")
+    var label: String? = null,
 
-    @field:ColumnInfo(name = "label")
-    var label: String,
+    @ColumnInfo(name = "confidence")
+    var confidence: Float = 0.0f,
 
-    @field:ColumnInfo(name = "confidence")
-    var confidence: Float,
-
-    @field:ColumnInfo(name = "date")
-    var date: String
+    @ColumnInfo(name = "image")
+    var image: String? = null,
 )

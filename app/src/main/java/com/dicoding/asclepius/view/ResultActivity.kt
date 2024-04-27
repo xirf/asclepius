@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -33,11 +32,10 @@ class ResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityResultBinding.inflate(layoutInflater)
-        val factory = ViewModelFactory.getInstance()
-        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
 
         setContentView(binding.root)
         enableEdgeToEdge()
+        initViewModel()
         getNews()
 
         setupUI()
@@ -47,10 +45,16 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
+    private fun initViewModel() {
+        val factory = ViewModelFactory.getInstance(application)
+        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
+    }
+
     private fun setupUI() {
         setupResultUI()
         setupFindHospitalButton()
     }
+
 
     private fun setupResultUI() {
         with(binding) {
@@ -74,7 +78,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun setupFindHospitalButton() {
-        binding.findHospitalButton.setOnClickListener { goToGoogleMaps() }
+        binding.findHospitalButton.setOnClickListener { openUrl("https://www.google.com/maps/search/Hospitals") }
     }
 
     private fun getNews() {
@@ -85,7 +89,7 @@ class ResultActivity : AppCompatActivity() {
                 binding.noNewsText.visibility = View.GONE
                 adapter.setListNews(it)
                 renderRecyclerView()
-            }else{
+            } else {
                 binding.newsList.visibility = View.GONE
                 binding.noNewsText.visibility = View.VISIBLE
             }
@@ -98,15 +102,13 @@ class ResultActivity : AppCompatActivity() {
             newsList.adapter = adapter
             newsList.setHasFixedSize(true)
             adapter.setOnClickCallback {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.url))
-                startActivity(intent)
+                it.url?.let { it1 -> openUrl(it1) }
             }
         }
     }
 
-    private fun goToGoogleMaps() {
-        val intent =
-            Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/Hospitals"))
+    private fun openUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
     }
 

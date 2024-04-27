@@ -13,16 +13,20 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.dicoding.asclepius.R
+import com.dicoding.asclepius.data.entity.HistoryEntity
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.dicoding.asclepius.viewmodel.HistoryViewModel
+import com.dicoding.asclepius.viewmodel.ViewModelFactory
 import org.tensorflow.lite.task.vision.classifier.Classifications
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var historyViewModel: HistoryViewModel
 
     private var currentImageUri: Uri? = null
-    private var analyzeResult: List<Classifications>? = null
     private var toast: Toast? = null
 
     private val requestPermissionLauncher =
@@ -38,13 +42,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (!checkPermissions()) {
-            requestPermissionLauncher.launch(REQUIRE_PERMISSION)
-        }
+        initViewModel()
 
-        if (currentImageUri == null) {
-            binding.analyzeButton.visibility = View.GONE
-        }
+
+        if (!checkPermissions()) requestPermissionLauncher.launch(REQUIRE_PERMISSION);
+        if (currentImageUri == null) binding.analyzeButton.visibility = View.GONE;
+
 
         with(binding) {
             progressIndicator.visibility = View.GONE
@@ -58,6 +61,11 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    private fun initViewModel() {
+        val factory = ViewModelFactory.getInstance(application)
+        historyViewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
     }
 
     private fun checkPermissions() = ContextCompat.checkSelfPermission(
@@ -96,8 +104,8 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onResults(results: List<Classifications>?) {
-                        analyzeResult = results
-                        moveToResult()
+                        insertIntoHistory(results!!)
+                        moveToResult(results)
                         binding.progressIndicator.visibility = View.GONE
                     }
                 })
@@ -105,8 +113,18 @@ class MainActivity : AppCompatActivity() {
         } ?: showToast(getString(R.string.empty_image_warning))
     }
 
-    private fun moveToResult() {
-        val topClassifications = analyzeResult?.get(0)?.categories
+    private fun insertIntoHistory(results: List<Classifications>) {
+        historyViewModel.insertHistory(
+            HistoryEntity(
+                label = results[0].categories?.get(0)?.label,
+                confidence = results[0].categories?.get(0)?.score ?: 0f,
+                image = currentImageUri.toString()
+            )
+        )
+    }
+
+    private fun moveToResult(analyzeResult: List<Classifications>) {
+        val topClassifications = analyzeResult[0].categories
         if (topClassifications != null) {
             val intent = Intent(this, ResultActivity::class.java)
             Log.d("RESULT", topClassifications[0].toString())
