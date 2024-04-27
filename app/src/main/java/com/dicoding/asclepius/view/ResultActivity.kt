@@ -56,14 +56,21 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun setupResultUI() {
         with(binding) {
             val predictionResult = intent.getStringExtra(EXTRA_RESULT)
             val confidenceScore = intent.getFloatExtra(EXTRA_CONFIDENCE_SCORE, 0f) * 100
+            val image = intent.getStringExtra(EXTRA_IMAGE_URI)
 
             confidenceText.text = "${confidenceScore.roundToInt()}%"
             resultText.text = predictionResult
-            resultImage.setImageURI(Uri.parse(intent.getStringExtra(EXTRA_IMAGE_URI)))
+
+            if (image != null) {
+                resultImage.setImageURI(Uri.parse(image))
+            } else {
+                resultImage.setImageResource(R.drawable.ic_place_holder)
+            }
 
             if (predictionResult != null) {
                 if (predictionResult.lowercase(Locale.ROOT) == "cancer") {

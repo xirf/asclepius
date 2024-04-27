@@ -10,11 +10,11 @@ data class HistoryEntity(
     var id: Int = 0,
 
     @ColumnInfo(name = "label")
-    var label: String? = null,
+    var label: String = "Cancer",
 
     @ColumnInfo(name = "confidence")
     var confidence: Float = 0.0f,
 
     @ColumnInfo(name = "image")
-    var image: String? = null,
+    var image: String = "",
 )

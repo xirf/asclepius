@@ -90,4 +90,7 @@ dependencies {
 
     // recylerview
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // UCrop
+    implementation("com.github.yalantis:ucrop:2.2.9")
 }

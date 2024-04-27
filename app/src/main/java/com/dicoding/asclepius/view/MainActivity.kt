@@ -18,13 +18,19 @@ import com.dicoding.asclepius.R
 import com.dicoding.asclepius.data.entity.HistoryEntity
 import com.dicoding.asclepius.databinding.ActivityMainBinding
 import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.dicoding.asclepius.helper.MediaStorageHelper
 import com.dicoding.asclepius.viewmodel.HistoryViewModel
 import com.dicoding.asclepius.viewmodel.ViewModelFactory
+import com.yalantis.ucrop.UCrop
 import org.tensorflow.lite.task.vision.classifier.Classifications
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var historyViewModel: HistoryViewModel
+    private lateinit var mediaStorageHelper: MediaStorageHelper
 
     private var currentImageUri: Uri? = null
     private var toast: Toast? = null
@@ -42,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initViewModel()
+        initViewModelAndHelper()
 
 
         if (!checkPermissions()) requestPermissionLauncher.launch(REQUIRE_PERMISSION);
@@ -60,12 +66,17 @@ class MainActivity : AppCompatActivity() {
                     )
                 )
             }
+
+            historyButton.setOnClickListener {
+                startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
+            }
         }
     }
 
-    private fun initViewModel() {
+    private fun initViewModelAndHelper() {
         val factory = ViewModelFactory.getInstance(application)
         historyViewModel = ViewModelProvider(this, factory)[HistoryViewModel::class.java]
+        mediaStorageHelper = MediaStorageHelper(this)
     }
 
     private fun checkPermissions() = ContextCompat.checkSelfPermission(
@@ -77,8 +88,7 @@ class MainActivity : AppCompatActivity() {
     private val launcherGallery =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
             if (uri != null) {
-                currentImageUri = uri
-                showImage()
+                cropImage(uri)
                 binding.analyzeButton.visibility = View.VISIBLE
             } else {
                 binding.analyzeButton.visibility = View.GONE
@@ -86,6 +96,39 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+    private fun cropImage(uri: Uri) {
+        val destinationUri: Uri = generateUriFromFile()
+
+        UCrop.of(uri, destinationUri)
+            .withAspectRatio(1f, 1f)
+            .start(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            val resultUri: Uri? = UCrop.getOutput(data!!)
+            currentImageUri = resultUri
+            showImage()
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            showToast("Gagal memotong gambar: $cropError")
+        }
+    }
+
+    private fun generateUriFromFile(): Uri {
+        val filename =
+            SimpleDateFormat("yyyyMMdd_HHmmss", resources.configuration.locales[0]).format(
+                Date()
+            )
+        return Uri.fromFile(
+            File(
+                cacheDir,
+                "$filename.jpg"
+            )
+        )
+    }
 
     private fun showImage() {
         currentImageUri?.let {
@@ -114,14 +157,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun insertIntoHistory(results: List<Classifications>) {
-        historyViewModel.insertHistory(
-            HistoryEntity(
-                label = results[0].categories?.get(0)?.label,
-                confidence = results[0].categories?.get(0)?.score ?: 0f,
-                image = currentImageUri.toString()
+        if (currentImageUri != null) {
+            val imagePath = mediaStorageHelper.saveImageToGallery(currentImageUri!!)
+            historyViewModel.insertHistory(
+                HistoryEntity(
+                    label = results[0].categories?.get(0)?.label ?: "Cancer",
+                    confidence = results[0].categories?.get(0)?.score ?: 0f,
+                    image = imagePath
+                )
             )
-        )
+        }
     }
+
 
     private fun moveToResult(analyzeResult: List<Classifications>) {
         val topClassifications = analyzeResult[0].categories
