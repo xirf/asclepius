@@ -110,8 +110,8 @@ class ResultActivity : AppCompatActivity() {
             newsList.layoutManager = LinearLayoutManager(this@ResultActivity)
             newsList.adapter = adapter
             newsList.setHasFixedSize(true)
-            adapter.setOnClickCallback {
-                it.url?.let { it1 -> openUrl(it1) }
+            adapter.setOnClickCallback { articleItem ->
+                articleItem.url?.let { newsUrl -> openUrl(newsUrl) }
             }
         }
     }
