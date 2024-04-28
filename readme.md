@@ -1,13 +1,17 @@
-# Asclepius
+<img src="cover.png" alt="Asclepius">
 
+<h1 align="center">Asclepius</h1>
+
+<p align="center">
 Asclepius is an Android application developed in Kotlin and Java, using the Android Studio Iguana | 2023.2.1 Patch 2 IDE. The application uses Gradle for build automation.
+</p>
 
 ## Features
 
-- Image-based disease prediction
-- Confidence score for predictions
-- Relevant news articles based on the prediction
-- Hospital locator
+-   Image-based disease prediction
+-   Confidence score for predictions
+-   Relevant news articles based on the prediction
+-   Hospital locator
 
 ## Getting Started
 
@@ -15,8 +19,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-- Android Studio Iguana | 2023.2.1 Patch 2 or later
-- Android SDK (specified in `local.properties`)
+-   Android Studio Iguana | 2023.2.1 Patch 2 or later
+-   Android SDK (specified in `local.properties`)
 
 ### Installing
 
@@ -32,8 +36,9 @@ These instructions will get you a copy of the project up and running on your loc
 Everyone is welcome to contribute to the project. feel free to fork the repository and submit a pull request.
 
 ## Authors
-- **dicoding** - *Initial work and starter template* - [dicoding](https://github.com/dicodingacademy/)
-- **xirf** - *Development and enhancements* - [xirf](https://github.com/xirf)
+
+-   **dicoding** - _Initial work and starter template_ - [dicoding](https://github.com/dicodingacademy/)
+-   **xirf** - _Development and enhancements_ - [xirf](https://github.com/xirf)
 
 ## License
 
